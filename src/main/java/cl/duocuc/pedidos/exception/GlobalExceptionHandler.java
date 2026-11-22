@@ -24,6 +24,18 @@ public class GlobalExceptionHandler {
         return respuesta(HttpStatus.CONFLICT, ex.getMessage(), null);
     }
 
+    // El pedido apunta a un cliente o producto que no existe -> 400 Bad Request.
+    @ExceptionHandler(ReferenciaInvalidaException.class)
+    public ResponseEntity<Map<String, Object>> referenciaInvalida(ReferenciaInvalidaException ex) {
+        return respuesta(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
+    }
+
+    // Clientes o Catalogo no respondieron -> 503 Service Unavailable.
+    @ExceptionHandler(ServicioNoDisponibleException.class)
+    public ResponseEntity<Map<String, Object>> servicioNoDisponible(ServicioNoDisponibleException ex) {
+        return respuesta(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage(), null);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> validacion(MethodArgumentNotValidException ex) {
         Map<String, String> errores = new LinkedHashMap<>();
