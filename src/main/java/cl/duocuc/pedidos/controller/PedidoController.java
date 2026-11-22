@@ -1,5 +1,7 @@
 package cl.duocuc.pedidos.controller;
 
+import cl.duocuc.pedidos.dto.EstadoRequest;
+import cl.duocuc.pedidos.dto.PedidoRequest;
 import cl.duocuc.pedidos.model.Pedido;
 import cl.duocuc.pedidos.service.PedidoService;
 import jakarta.validation.Valid;
@@ -39,15 +41,21 @@ public class PedidoController {
 
     // POST /api/v1/pedidos  -> 201 Created
     @PostMapping
-    public ResponseEntity<Pedido> crear(@Valid @RequestBody Pedido pedido) {
-        Pedido creado = service.crear(pedido);
+    public ResponseEntity<Pedido> crear(@Valid @RequestBody PedidoRequest request) {
+        Pedido creado = service.crear(request);
         return ResponseEntity.created(URI.create("/api/v1/pedidos/" + creado.getId())).body(creado);
     }
 
-    // PUT /api/v1/pedidos/{id}
+    // PUT /api/v1/pedidos/{id}  -> cambia cliente y productos (solo si esta PENDIENTE)
     @PutMapping("/{id}")
-    public Pedido actualizar(@PathVariable Long id, @Valid @RequestBody Pedido pedido) {
-        return service.actualizar(id, pedido);
+    public Pedido actualizar(@PathVariable Long id, @Valid @RequestBody PedidoRequest request) {
+        return service.actualizar(id, request);
+    }
+
+    // PATCH /api/v1/pedidos/{id}/estado  -> cambia solo el estado, por ejemplo a PAGADO
+    @PatchMapping("/{id}/estado")
+    public Pedido cambiarEstado(@PathVariable Long id, @Valid @RequestBody EstadoRequest request) {
+        return service.cambiarEstado(id, request.estado());
     }
 
     // DELETE /api/v1/pedidos/{id}  -> 204 No Content
